@@ -1,8 +1,10 @@
 package handler
 
+import "engine/internal/service"
+
 type UserHandler struct {
 }
 
-func NewUserHandler() *UserHandler {
+func NewUserHandler(serv *service.UserService) *UserHandler {
 	return &UserHandler{}
 }

@@ -1,15 +1,17 @@
 package handler
 
+import "engine/internal/service"
+
 type Handler struct {
 	Category *CategoryHandler
 	User     *UserHandler
 	Content  *ContentHandler
 }
 
-func New() *Handler {
+func New(serv *service.Service) *Handler {
 	return &Handler{
-		Category: NewCategoryHandler(),
-		User:     NewUserHandler(),
-		Content:  NewContentHandler(),
+		Category: NewCategoryHandler(serv.Category),
+		User:     NewUserHandler(serv.User),
+		Content:  NewContentHandler(serv.Content),
 	}
 }

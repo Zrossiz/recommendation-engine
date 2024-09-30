@@ -2,6 +2,10 @@ package app
 
 import (
 	"engine/internal/config"
+	"engine/internal/service"
+	"engine/internal/storage/postgresql"
+	"engine/internal/storage/redis"
+	"engine/internal/transport/http/handler"
 	"engine/internal/transport/http/router"
 	"engine/pkg/logger"
 	"fmt"
@@ -24,18 +28,20 @@ func Start() {
 	log := zapLogger.ZapLogger
 	log.Info("logger ready")
 
-	// dbClient, err := postgresql.Connect(cfg.DBDSN)
-	// if err != nil {
-	// 	log.Fatal(err.Error())
-	// }
-	// db := postgresql.New(dbClient)
-	// log.Info("db ready")
+	dbClient, err := postgresql.Connect(cfg.DBDSN)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	db := postgresql.New(dbClient)
+	log.Info("db ready")
 
-	// redisClient := redis.Connect(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB)
-	// rdb := redis.New(redisClient)
-	// log.Info("redis ready")
+	redisClient := redis.Connect(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB)
+	rdb := redis.New(redisClient)
+	log.Info("redis ready")
 
-	r := router.New()
+	serv := service.New(db, rdb)
+	h := handler.New(serv)
+	r := router.New(h)
 
 	srv := &http.Server{
 		Addr:    cfg.RunAddr,

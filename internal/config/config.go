@@ -40,7 +40,7 @@ func getEnvAsInt(key string) (int, error) {
 }
 
 func Init() (*Config, error) {
-	_ = godotenv.Load(".env")
+	_ = godotenv.Load()
 
 	cfg := Config{}
 
@@ -65,6 +65,9 @@ func Init() (*Config, error) {
 		return nil, err
 	}
 	if cfg.LogLevel, err = getEnv("LOG_LEVEL"); err != nil {
+		return nil, err
+	}
+	if cfg.RunAddr, err = getEnv("RUN_ADDRESS"); err != nil {
 		return nil, err
 	}
 

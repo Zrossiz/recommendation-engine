@@ -8,7 +8,9 @@ import (
 )
 
 type DBStorage struct {
-	db *pgxpool.Pool
+	ContentStore  *ContentStore
+	CategoryStore *CategoryStore
+	UserStore     *UserStore
 }
 
 func Connect(dsn string) (*pgxpool.Pool, error) {
@@ -21,5 +23,10 @@ func Connect(dsn string) (*pgxpool.Pool, error) {
 }
 
 func New(dbConn *pgxpool.Pool) *DBStorage {
-	return &DBStorage{db: dbConn}
+
+	return &DBStorage{
+		ContentStore:  NewContentStore(dbConn),
+		UserStore:     NewUserStore(dbConn),
+		CategoryStore: NewCategoryStore(dbConn),
+	}
 }

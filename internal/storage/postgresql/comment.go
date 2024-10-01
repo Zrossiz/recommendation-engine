@@ -19,7 +19,7 @@ func (com *CommentStore) Create(commentDTO dto.Comment) (bool, error) {
 	return true, nil
 }
 
-func (com *CommentStore) GetAll() ([]model.Comment, error) {
+func (com *CommentStore) GetAllByPost() ([]model.Comment, error) {
 	var comments []model.Comment
 
 	return comments, nil

@@ -11,6 +11,8 @@ type DBStorage struct {
 	ContentStore  *ContentStore
 	CategoryStore *CategoryStore
 	UserStore     *UserStore
+	TokenStore    *TokenStore
+	CommentStore  *CommentStore
 }
 
 func Connect(dsn string) (*pgxpool.Pool, error) {
@@ -28,5 +30,7 @@ func New(dbConn *pgxpool.Pool) *DBStorage {
 		ContentStore:  NewContentStore(dbConn),
 		UserStore:     NewUserStore(dbConn),
 		CategoryStore: NewCategoryStore(dbConn),
+		TokenStore:    NewTokenStore(dbConn),
+		CommentStore:  NewCommentStore(dbConn),
 	}
 }

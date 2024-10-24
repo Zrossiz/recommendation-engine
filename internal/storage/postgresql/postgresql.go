@@ -31,7 +31,7 @@ func New(dbConn *pgxpool.Pool, log *zap.Logger) *DBStorage {
 		ContentStore:  NewContentStore(dbConn),
 		UserStore:     NewUserStore(dbConn, log),
 		CategoryStore: NewCategoryStore(dbConn, log),
-		TokenStore:    NewTokenStore(dbConn),
+		TokenStore:    NewTokenStore(dbConn, log),
 		CommentStore:  NewCommentStore(dbConn, log),
 	}
 }

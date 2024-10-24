@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS user_interactions (
 );
 
 -- Таблица refresh-токенов
-CREATE TABLE IF NOT EXISTS refresh_tokens (
+CREATE TABLE IF NOT EXISTS tokens (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     token VARCHAR(512) NOT NULL,

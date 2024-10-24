@@ -5,14 +5,19 @@ import (
 	"engine/internal/model"
 
 	"github.com/jackc/pgx/v4/pgxpool"
+	"go.uber.org/zap"
 )
 
 type CommentStore struct {
-	db *pgxpool.Pool
+	db  *pgxpool.Pool
+	log *zap.Logger
 }
 
-func NewCommentStore(db *pgxpool.Pool) *CommentStore {
-	return &CommentStore{db: db}
+func NewCommentStore(db *pgxpool.Pool, log *zap.Logger) *CommentStore {
+	return &CommentStore{
+		db:  db,
+		log: log,
+	}
 }
 
 func (com *CommentStore) Create(commentDTO dto.Comment) (bool, error) {

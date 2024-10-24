@@ -32,7 +32,7 @@ func Start() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	db := postgresql.New(dbClient)
+	db := postgresql.New(dbClient, log)
 	log.Info("db ready")
 
 	redisClient := redis.Connect(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB)

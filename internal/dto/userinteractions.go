@@ -10,6 +10,6 @@ type CreateInteraction struct {
 }
 
 type GetUserInteractions struct {
-	model.Content
+	model.UserInteraction
 	Category model.Category
 }

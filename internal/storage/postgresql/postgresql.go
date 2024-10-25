@@ -9,11 +9,12 @@ import (
 )
 
 type DBStorage struct {
-	ContentStore  *ContentStore
-	CategoryStore *CategoryStore
-	UserStore     *UserStore
-	TokenStore    *TokenStore
-	CommentStore  *CommentStore
+	ContentStore          *ContentStore
+	CategoryStore         *CategoryStore
+	UserStore             *UserStore
+	TokenStore            *TokenStore
+	CommentStore          *CommentStore
+	UserInteractionsStore *UserInteractionsStore
 }
 
 func Connect(dsn string) (*pgxpool.Pool, error) {
@@ -28,10 +29,11 @@ func Connect(dsn string) (*pgxpool.Pool, error) {
 func New(dbConn *pgxpool.Pool, log *zap.Logger) *DBStorage {
 
 	return &DBStorage{
-		ContentStore:  NewContentStore(dbConn),
-		UserStore:     NewUserStore(dbConn, log),
-		CategoryStore: NewCategoryStore(dbConn, log),
-		TokenStore:    NewTokenStore(dbConn, log),
-		CommentStore:  NewCommentStore(dbConn, log),
+		ContentStore:          NewContentStore(dbConn, log),
+		UserStore:             NewUserStore(dbConn, log),
+		CategoryStore:         NewCategoryStore(dbConn, log),
+		TokenStore:            NewTokenStore(dbConn, log),
+		CommentStore:          NewCommentStore(dbConn, log),
+		UserInteractionsStore: NewUserInteractionsStore(dbConn, log),
 	}
 }

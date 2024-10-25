@@ -13,7 +13,6 @@ type DBStorage struct {
 	CategoryStore         *CategoryStore
 	UserStore             *UserStore
 	TokenStore            *TokenStore
-	CommentStore          *CommentStore
 	UserInteractionsStore *UserInteractionsStore
 }
 
@@ -33,7 +32,6 @@ func New(dbConn *pgxpool.Pool, log *zap.Logger) *DBStorage {
 		UserStore:             NewUserStore(dbConn, log),
 		CategoryStore:         NewCategoryStore(dbConn, log),
 		TokenStore:            NewTokenStore(dbConn, log),
-		CommentStore:          NewCommentStore(dbConn, log),
 		UserInteractionsStore: NewUserInteractionsStore(dbConn, log),
 	}
 }

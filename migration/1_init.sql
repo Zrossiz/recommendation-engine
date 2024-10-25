@@ -35,15 +35,6 @@ CREATE TABLE IF NOT EXISTS content (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Таблица комментариев
-CREATE TABLE IF NOT EXISTS comments (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    text TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- Таблица взаимодействий пользователей
 CREATE TABLE IF NOT EXISTS user_interactions (
     id SERIAL PRIMARY KEY,

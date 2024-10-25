@@ -1,20 +1,28 @@
 package service
 
 import (
-	"engine/internal/storage/postgresql"
-	"engine/internal/storage/redis"
+	"go.uber.org/zap"
 )
 
 type Service struct {
-	Category *CategoryService
-	User     *UserService
-	Content  *ContentService
+	Category         *CategoryService
+	User             *UserService
+	Content          *ContentService
+	UserInteractions *UserInteractionsService
 }
 
-func New(db *postgresql.DBStorage, rdb *redis.RedisStorage) *Service {
+type Storage struct {
+	UserStore             UserStore
+	CategoryStore         CategoryStore
+	ContentStore          ContentStore
+	UserInteractionsStore UserInteractionsStore
+}
+
+func New(db Storage, log *zap.Logger) *Service {
 	return &Service{
-		Category: NewCategoryService(db, rdb),
-		User:     NewUserService(db, rdb),
-		Content:  NewContentService(db, rdb),
+		Category:         NewCategoryService(db.CategoryStore, log),
+		User:             NewUserService(db.UserStore, log),
+		Content:          NewContentService(db.ContentStore, log),
+		UserInteractions: NewUserInteractionsService(db.UserInteractionsStore, log),
 	}
 }

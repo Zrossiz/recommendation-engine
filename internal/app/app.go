@@ -36,10 +36,15 @@ func Start() {
 	log.Info("db ready")
 
 	redisClient := redis.Connect(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB)
-	rdb := redis.New(redisClient)
+	_ = redis.New(redisClient)
 	log.Info("redis ready")
 
-	serv := service.New(db, rdb)
+	serv := service.New(service.Storage{
+		UserStore:             db.UserStore,
+		UserInteractionsStore: db.UserInteractionsStore,
+		ContentStore:          db.ContentStore,
+		CategoryStore:         db.CategoryStore,
+	}, log)
 	h := handler.New(serv)
 	r := router.New(h)
 

@@ -17,6 +17,7 @@ type Config struct {
 	RedisAddr        string
 	RedisPassword    string
 	RedisDB          int
+	Cost             int
 }
 
 func getEnv(key string) (string, error) {
@@ -68,6 +69,10 @@ func Init() (*Config, error) {
 		return nil, err
 	}
 	if cfg.RunAddr, err = getEnv("RUN_ADDRESS"); err != nil {
+		return nil, err
+	}
+
+	if cfg.Cost, err = getEnvAsInt("COST"); err != nil {
 		return nil, err
 	}
 

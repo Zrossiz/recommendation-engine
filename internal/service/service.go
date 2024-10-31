@@ -1,6 +1,8 @@
 package service
 
 import (
+	"engine/internal/config"
+
 	"go.uber.org/zap"
 )
 
@@ -18,10 +20,10 @@ type Storage struct {
 	UserInteractionsStore UserInteractionsStore
 }
 
-func New(db Storage, log *zap.Logger) *Service {
+func New(db Storage, log *zap.Logger, cfg *config.Config) *Service {
 	return &Service{
 		Category:         NewCategoryService(db.CategoryStore, log),
-		User:             NewUserService(db.UserStore, log),
+		User:             NewUserService(db.UserStore, log, cfg),
 		Content:          NewContentService(db.ContentStore, log),
 		UserInteractions: NewUserInteractionsService(db.UserInteractionsStore, log),
 	}

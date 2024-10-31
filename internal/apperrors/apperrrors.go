@@ -3,5 +3,7 @@ package apperrors
 import "errors"
 
 var (
-	ErrNotFound = errors.New("record not found")
+	ErrDBQuery      = errors.New("database query error")
+	ErrNotFound     = errors.New("record not found")
+	ErrHashPassword = errors.New("error hashing password")
 )

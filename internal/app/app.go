@@ -44,7 +44,7 @@ func Start() {
 		UserInteractionsStore: db.UserInteractionsStore,
 		ContentStore:          db.ContentStore,
 		CategoryStore:         db.CategoryStore,
-	}, log)
+	}, log, cfg)
 	h := handler.New(serv)
 	r := router.New(h)
 

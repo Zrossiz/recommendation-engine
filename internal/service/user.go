@@ -1,6 +1,7 @@
 package service
 
 import (
+	"engine/internal/apperrors"
 	"engine/internal/config"
 	"engine/internal/dto"
 	"engine/internal/model"
@@ -40,19 +41,19 @@ func NewUserService(db UserStore, log *zap.Logger, cfg *config.Config) *UserServ
 }
 
 func (u *UserService) Registration(user dto.User) dto.SuccessAuthenticate {
-	success := dto.SuccessAuthenticate{}
+	res := dto.SuccessAuthenticate{}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), u.cfg.Cost)
 	if err != nil {
-		success.Err = err
-		return success
+		res.Err = err
+		return res
 	}
 	user.Password = string(hashedPassword)
 
 	_, err = u.db.Create(user)
 	if err != nil {
-		success.Err = err
-		return success
+		res.Err = err
+		return res
 	}
 
 	createdUser, err := u.db.GetUserByName(user.Username)
@@ -66,20 +67,49 @@ func (u *UserService) Registration(user dto.User) dto.SuccessAuthenticate {
 		payload,
 		u.cfg.JWTAccessSecret,
 		u.cfg.JWTRefreshSecret,
-		&success,
+		&res,
 	)
-	if success.Err != nil {
+	if res.Err != nil {
 		u.log.Error("create tokens err", zap.Error(err))
 	}
 
-	return success
+	return res
+}
+
+func (u *UserService) Login(user dto.User) *dto.SuccessAuthenticate {
+	res := dto.SuccessAuthenticate{}
+	existUser, err := u.db.GetUserByName(user.Username)
+	if err != nil {
+		res.Err = err
+		return &res
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(existUser.Password), []byte(user.Password))
+	if err != nil {
+		res.Err = apperrors.ErrInvalidPassword
+		return &res
+	}
+
+	payload := dto.JWTPayload{
+		ID:       int(existUser.ID),
+		Username: existUser.Name,
+	}
+
+	generateTokenPair(
+		payload,
+		u.cfg.JWTAccessSecret,
+		u.cfg.JWTRefreshSecret,
+		&res,
+	)
+
+	return &res
 }
 
 func generateTokenPair(
 	payload dto.JWTPayload,
 	accessSecret string,
 	refreshSecret string,
-	success *dto.SuccessAuthenticate,
+	res *dto.SuccessAuthenticate,
 ) {
 	claims := &CustomClaims{
 		UserID:   int64(payload.ID),
@@ -94,7 +124,7 @@ func generateTokenPair(
 
 	accessToken, err := token.SignedString(accessSecret)
 	if err != nil {
-		success.Err = err
+		res.Err = err
 		return
 	}
 
@@ -102,10 +132,10 @@ func generateTokenPair(
 
 	refreshToken, err := token.SignedString(refreshSecret)
 	if err != nil {
-		success.Err = err
+		res.Err = err
 		return
 	}
 
-	success.AcessToken = accessToken
-	success.RefreshToken = refreshToken
+	res.AcessToken = accessToken
+	res.RefreshToken = refreshToken
 }

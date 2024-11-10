@@ -40,20 +40,20 @@ func NewUserService(db UserStore, log *zap.Logger, cfg *config.Config) *UserServ
 	}
 }
 
-func (u *UserService) Registration(user dto.User) dto.SuccessAuthenticate {
+func (u *UserService) Registration(user dto.User) *dto.SuccessAuthenticate {
 	res := dto.SuccessAuthenticate{}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), u.cfg.Cost)
 	if err != nil {
 		res.Err = err
-		return res
+		return &res
 	}
 	user.Password = string(hashedPassword)
 
 	_, err = u.db.Create(user)
 	if err != nil {
 		res.Err = err
-		return res
+		return &res
 	}
 
 	createdUser, err := u.db.GetUserByName(user.Username)
@@ -73,7 +73,7 @@ func (u *UserService) Registration(user dto.User) dto.SuccessAuthenticate {
 		u.log.Error("create tokens err", zap.Error(err))
 	}
 
-	return res
+	return &res
 }
 
 func (u *UserService) Login(user dto.User) *dto.SuccessAuthenticate {
@@ -122,7 +122,7 @@ func generateTokenPair(
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	accessToken, err := token.SignedString(accessSecret)
+	accessToken, err := token.SignedString([]byte(accessSecret))
 	if err != nil {
 		res.Err = err
 		return
@@ -130,7 +130,7 @@ func generateTokenPair(
 
 	claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(24 * time.Hour * 30))
 
-	refreshToken, err := token.SignedString(refreshSecret)
+	refreshToken, err := token.SignedString([]byte(refreshSecret))
 	if err != nil {
 		res.Err = err
 		return

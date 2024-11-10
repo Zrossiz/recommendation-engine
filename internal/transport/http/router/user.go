@@ -1,19 +1,27 @@
 package router
 
 import (
-	"engine/internal/transport/http/handler"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
-type UserRouter struct{}
-
-func NewUserRouter() *UserRouter {
-	return &UserRouter{}
+type UserRouter struct {
+	handler UserHandler
 }
 
-func (u *UserRouter) RegisterRoutes(r chi.Router, h *handler.UserHandler) {
-	r.Route("/user", func(r chi.Router) {
+type UserHandler interface {
+	Registration(rw http.ResponseWriter, r *http.Request)
+}
 
+func NewUserRouter(h UserHandler) *UserRouter {
+	return &UserRouter{
+		handler: h,
+	}
+}
+
+func (u *UserRouter) RegisterRoutes(r chi.Router) {
+	r.Route("/user", func(r chi.Router) {
+		r.Post("/registration", u.handler.Registration)
 	})
 }

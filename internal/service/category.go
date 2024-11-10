@@ -24,3 +24,9 @@ func NewCategoryService(db CategoryStore, log *zap.Logger) *CategoryService {
 		log: log,
 	}
 }
+
+func (c *CategoryService) Create(categotyDTO dto.Category) (bool, error) {
+	isCreated, err := c.db.Create(categotyDTO)
+
+	return isCreated, err
+}

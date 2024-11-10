@@ -6,6 +6,8 @@ import (
 	"engine/internal/dto"
 	"engine/internal/model"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
 )
@@ -26,6 +28,9 @@ func (c *CategoryStore) Create(categoryDTO dto.Category) (bool, error) {
 	sql := `INSERT INTO categories (name) VALUES ($1)`
 	_, err := c.db.Exec(context.Background(), sql, categoryDTO.Name)
 	if err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == pgerrcode.UniqueViolation {
+			return false, apperrors.ErrAlreadyExist
+		}
 		return false, err
 	}
 

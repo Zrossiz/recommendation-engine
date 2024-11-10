@@ -18,7 +18,7 @@ func New(h *handler.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	router := &Router{
-		Category:         *NewCategoryRouter(),
+		Category:         *NewCategoryRouter(h.Category),
 		User:             *NewUserRouter(h.User),
 		Content:          *NewContentRouter(),
 		UserInteractions: *NewUserUnteractionsRouter(h.UserInteractions),

@@ -46,15 +46,6 @@ CREATE TABLE IF NOT EXISTS user_interactions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Таблица refresh-токенов
-CREATE TABLE IF NOT EXISTS tokens (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    token VARCHAR(512) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- Триггеры для автоматического обновления поля updated_at при обновлениях
 CREATE TRIGGER update_users_updated_at
 BEFORE UPDATE ON users
@@ -68,16 +59,6 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TRIGGER update_content_updated_at
 BEFORE UPDATE ON content
-FOR EACH ROW
-EXECUTE PROCEDURE update_updated_at_column();
-
-CREATE TRIGGER update_comments_updated_at
-BEFORE UPDATE ON comments
-FOR EACH ROW
-EXECUTE PROCEDURE update_updated_at_column();
-
-CREATE TRIGGER update_refresh_tokens_updated_at
-BEFORE UPDATE ON refresh_tokens
 FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_column();
 

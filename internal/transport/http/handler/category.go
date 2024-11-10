@@ -1,10 +1,13 @@
 package handler
 
-import "engine/internal/service"
+import "go.uber.org/zap"
 
 type CategoryHandler struct {
 }
 
-func NewCategoryHandler(serv *service.CategoryService) *CategoryHandler {
+type CategoryService interface {
+}
+
+func NewCategoryHandler(serv CategoryService, log *zap.Logger) *CategoryHandler {
 	return &CategoryHandler{}
 }

@@ -45,9 +45,12 @@ func Start() {
 		ContentStore:          db.ContentStore,
 		CategoryStore:         db.CategoryStore,
 	}, log, cfg)
-	h := handler.New(serv)
+
+	h := handler.New(serv, log)
+
 	r := router.New(h)
 
+	log.Sugar().Infof("starting server on %s", cfg.RunAddr)
 	srv := &http.Server{
 		Addr:    cfg.RunAddr,
 		Handler: r,

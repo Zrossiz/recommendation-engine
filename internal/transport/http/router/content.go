@@ -1,8 +1,6 @@
 package router
 
 import (
-	"engine/internal/transport/http/handler"
-
 	"github.com/go-chi/chi/v5"
 )
 
@@ -12,8 +10,7 @@ func NewContentRouter() *ContentRouter {
 	return &ContentRouter{}
 }
 
-func (c *ContentRouter) RegisterRoutes(r chi.Router, h *handler.ContentHandler) {
+func (c *ContentRouter) RegisterRoutes(r chi.Router) {
 	r.Route("/content", func(r chi.Router) {
-		r.Post("/", h.Create)
 	})
 }

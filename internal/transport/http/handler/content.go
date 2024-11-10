@@ -1,14 +1,18 @@
 package handler
 
 import (
-	"engine/internal/service"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 type ContentHandler struct {
 }
 
-func NewContentHandler(serv *service.ContentService) *ContentHandler {
+type ContentService interface {
+}
+
+func NewContentHandler(serv ContentService, log *zap.Logger) *ContentHandler {
 	return &ContentHandler{}
 }
 

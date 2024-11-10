@@ -34,6 +34,7 @@ func (co *ContentStore) Create(contentDTO dto.Content) (bool, error) {
 	)
 	if err != nil {
 		co.log.Error("create content error", zap.Error(err))
+		return false, err
 	}
 
 	return true, nil

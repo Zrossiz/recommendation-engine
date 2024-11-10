@@ -25,3 +25,12 @@ func NewContentService(db ContentStore, log *zap.Logger) *ContentService {
 		log: log,
 	}
 }
+
+func (c *ContentService) Create(contentDTO dto.Content) (bool, error) {
+	_, err := c.db.Create(contentDTO)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

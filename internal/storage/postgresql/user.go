@@ -6,6 +6,8 @@ import (
 	"engine/internal/dto"
 	"engine/internal/model"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
@@ -26,9 +28,8 @@ func NewUserStore(db *pgxpool.Pool, log *zap.Logger) *UserStore {
 func (u *UserStore) Create(userDTO dto.User) (bool, error) {
 	sql := `INSERT INTO users (name, password) VALUES ($1, $2)`
 	_, err := u.db.Exec(context.Background(), sql, userDTO.Username, userDTO.Password)
-	if err != nil {
-		u.log.Error("insert user", zap.Error(err))
-		return false, err
+	if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == pgerrcode.UniqueViolation {
+		return false, apperrors.ErrAlreadyExist
 	}
 
 	return true, nil
@@ -80,16 +81,16 @@ func (u *UserStore) GetUserById(id int64) (*model.User, error) {
 }
 
 func (u *UserStore) GetUserByName(name string) (*model.User, error) {
-	sql := `SELECT id, name FROM users WHERE "name" = $1`
+	sql := `SELECT id, name, password FROM users WHERE "name" = $1`
 
 	row := u.db.QueryRow(context.Background(), sql, name)
 	var usr model.User
-	err := row.Scan(&usr.ID, &usr.Name)
+	err := row.Scan(&usr.ID, &usr.Name, &usr.Password)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, apperrors.ErrNotFound
 		}
-		u.log.Error("get user by id", zap.Error(err))
+		u.log.Error("get user by name", zap.Error(err))
 		return nil, err
 	}
 

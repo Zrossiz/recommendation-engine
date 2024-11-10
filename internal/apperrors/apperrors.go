@@ -8,4 +8,5 @@ var (
 	ErrHashPassword    = errors.New("hashing password")
 	ErrInvalidPassword = errors.New("password invalid")
 	ErrAlreadyExist    = errors.New("already exist")
+	ErrUserNotFound    = errors.New("user not found")
 )

@@ -12,6 +12,7 @@ type UserRouter struct {
 
 type UserHandler interface {
 	Registration(rw http.ResponseWriter, r *http.Request)
+	Login(rw http.ResponseWriter, r *http.Request)
 }
 
 func NewUserRouter(h UserHandler) *UserRouter {
@@ -23,5 +24,6 @@ func NewUserRouter(h UserHandler) *UserRouter {
 func (u *UserRouter) RegisterRoutes(r chi.Router) {
 	r.Route("/user", func(r chi.Router) {
 		r.Post("/registration", u.handler.Registration)
+		r.Post("/login", u.handler.Login)
 	})
 }

@@ -5,12 +5,14 @@ import (
 	"engine/internal/dto"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
 type ContentHandler struct {
-	service ContentService
-	log     *zap.Logger
+	service  ContentService
+	log      *zap.Logger
+	validate *validator.Validate
 }
 
 type ContentService interface {
@@ -19,15 +21,22 @@ type ContentService interface {
 
 func NewContentHandler(serv ContentService, log *zap.Logger) *ContentHandler {
 	return &ContentHandler{
-		service: serv,
-		log:     log,
+		service:  serv,
+		log:      log,
+		validate: validator.New(),
 	}
 }
 
 func (co *ContentHandler) Create(rw http.ResponseWriter, r *http.Request) {
 	var contentDTO dto.Content
 
-	err := json.NewDecoder(r.Body).Decode(&contentDTO)
+	err := co.validate.Struct(contentDTO)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&contentDTO)
 	if err != nil {
 		http.Error(rw, "invalid body", http.StatusBadRequest)
 		return

@@ -27,6 +27,7 @@ func New(h *handler.Handler) http.Handler {
 	router.Category.RegisterRoutes(r)
 	router.User.RegisterRoutes(r)
 	router.Content.RegisterRoutes(r)
+	router.UserInteractions.RegisterRoutes(r)
 
 	return r
 }

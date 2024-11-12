@@ -22,3 +22,12 @@ func NewUserInteractionsService(db UserInteractionsStore, log *zap.Logger) *User
 		log: log,
 	}
 }
+
+func (i *UserInteractionsService) Create(interactionDTO dto.CreateInteraction) (bool, error) {
+	_, err := i.db.Create(interactionDTO)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

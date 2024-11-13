@@ -50,3 +50,9 @@ type UserInteraction struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
+
+type Interest struct {
+	ID         int64 `json:"id"`
+	UserID     int64 `json:"user_id"`
+	CategoryID int64 `json:"category_id"`
+}

@@ -12,6 +12,7 @@ type Router struct {
 	User             UserRouter
 	Content          ContentRouter
 	UserInteractions UserInteractionsRouter
+	Interests        InterestsRouter
 }
 
 func New(h *handler.Handler) http.Handler {
@@ -22,12 +23,14 @@ func New(h *handler.Handler) http.Handler {
 		User:             *NewUserRouter(h.User),
 		Content:          *NewContentRouter(h.Content),
 		UserInteractions: *NewUserUnteractionsRouter(h.UserInteractions),
+		Interests:        *NewIntereestsRouter(h.Interests),
 	}
 
 	router.Category.RegisterRoutes(r)
 	router.User.RegisterRoutes(r)
 	router.Content.RegisterRoutes(r)
 	router.UserInteractions.RegisterRoutes(r)
+	router.Interests.RegisterRoutes(r)
 
 	return r
 }

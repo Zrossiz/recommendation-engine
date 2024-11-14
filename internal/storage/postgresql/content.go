@@ -101,3 +101,54 @@ func (co *ContentStore) GetAllByCategory(categoryId int64, page int64) ([]model.
 
 	return content, nil
 }
+
+func (co *ContentStore) GetNewContentForUserFromCategories(
+	userID int64,
+	contentCategories map[string]int,
+) ([]model.Content, error) {
+	var recommendations []model.Content
+
+	for category, limit := range contentCategories {
+		sql := `
+			SELECT c.id, c.category_id, c.title, c.description, c.link
+			FROM content c
+			JOIN categories cat ON c.category_id = cat.id
+			WHERE cat.name = $1
+			AND c.id NOT IN (
+				SELECT content_id
+				FROM user_interactions
+				WHERE user_id = $2
+			)
+			LIMIT $3
+		`
+
+		rows, err := co.db.Query(context.Background(), sql, category, userID, limit)
+		if err != nil {
+			co.log.Error("get new content", zap.Error(err))
+			return nil, err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var content model.Content
+			err := rows.Scan(
+				&content.ID,
+				&content.CategoryID,
+				&content.Title,
+				&content.Description,
+				&content.Link,
+			)
+			if err != nil {
+				co.log.Error("scan content", zap.Error(err))
+			}
+			recommendations = append(recommendations, content)
+		}
+
+		if err = rows.Err(); err != nil {
+			co.log.Error("rows iteration", zap.Error(err))
+			return nil, err
+		}
+	}
+
+	return recommendations, nil
+}

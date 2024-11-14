@@ -2,6 +2,7 @@ package service
 
 import (
 	"engine/internal/dto"
+	"engine/internal/model"
 
 	"go.uber.org/zap"
 )
@@ -9,6 +10,7 @@ import (
 type UserInteractionsStore interface {
 	Create(dto dto.CreateInteraction) (bool, error)
 	GetInteractionsByUser(userID int64) ([]dto.GetUserInteractions, error)
+	GetCategoriesFromUserInteractions(userID int64) ([]model.Category, error)
 }
 
 type UserInteractionsService struct {

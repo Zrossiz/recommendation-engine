@@ -26,7 +26,7 @@ func New(db Storage, log *zap.Logger, cfg *config.Config) *Service {
 	return &Service{
 		Category:         NewCategoryService(db.CategoryStore, log),
 		User:             NewUserService(db.UserStore, log, cfg),
-		Content:          NewContentService(db.ContentStore, db.UserInteractionsStore, log),
+		Content:          NewContentService(db.ContentStore, db.UserInteractionsStore, db.InterestsStore, log),
 		UserInteractions: NewUserInteractionsService(db.UserInteractionsStore, log),
 		Interests:        NewInterestsService(db.InterestsStore, log),
 	}
